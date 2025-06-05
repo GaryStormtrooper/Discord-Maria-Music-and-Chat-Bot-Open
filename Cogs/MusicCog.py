@@ -75,11 +75,8 @@ class YTDLSource(discord.PCMVolumeTransformer):
     @classmethod
     async def create_source(cls, ctx: discord.ext.commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None):
         loop = loop or asyncio.get_event_loop()
-        print("Create1")
         partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
-        print("Create2")
         data = await loop.run_in_executor(None, partial)
-        print("Create3")
 
         if data is None:
             raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
@@ -96,13 +93,9 @@ class YTDLSource(discord.PCMVolumeTransformer):
             if process_info is None:
                 raise YTDLError('Couldn\'t find anything that matches `{}`'.format(search))
 
-        print("Create4")
         webpage_url = process_info['webpage_url']
-        print("Create5")
         partial = functools.partial(cls.ytdl.extract_info, webpage_url, download=False)
-        print("Create6")
         processed_info = await loop.run_in_executor(None, partial)
-        print("Create7")
 
         if processed_info is None:
             raise YTDLError('Couldn\'t fetch `{}`'.format(webpage_url))
@@ -118,9 +111,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                     raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
 
         try:
-            print("Create8")
             new_source = cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
-            print("Create9")
         except discord.ClientException:
             raise YTDLError("FFmpegPCMAudio Subprocess failed to be created. Is one already running?")
         return new_source
@@ -247,7 +238,6 @@ class VoiceState:
     async def audio_player_task(self):
         while True:
             self.next.clear()
-            print('Player1')
             # check if looping or
             if not self.loop or self.current is None:
                 # If no song will be added to the queue in time,
@@ -255,28 +245,21 @@ class VoiceState:
                 # reasons.
                 try:
                     async with timeout(20):  # Wait for a few seconds
-                        print('Player2')
                         self.current = await self.songs.get()
-                        print('Player3')
                 except asyncio.TimeoutError:
 
                     self.bot.loop.create_task(self.stop())
                     return False
-            print('Player4')
             self.current.source.volume = self._volume
             try:
-                print('Player5')
                 self.voice.play(self.current.source, after=self.play_next_song)
                 if self.is_playing:
                     print('Is playing')
-                print('Player6')
             except Exception as e:
                 print('Error occured when trying to play song {}'.format(e))
                 await self.stop()
                 return
-            print('Player7')
             self.NowPlayingMessage = await self.current.source.channel.send(embed=self.current.create_embed())
-            print('Player8')
 
             await self.next.wait()
 
@@ -541,35 +524,25 @@ class MusicCog(commands.Cog):
         This command automatically searches from various sites if no URL is provided.
         A list of these sites can be found here: https://rg3.github.io/youtube-dl/supportedsites.html
         """
-        print("Play1")
         #if not ctx.voice_state.voice or not ctx.voice_state.is_in_channel():
         if not ctx.voice_state.voice:
-            print("Play2")
             await ctx.invoke(self._join)
 
         if ctx.voice_state.audio_player.done():
-            print("Play3")
             ctx.voice_state.audio_player = self.bot.loop.create_task(ctx.voice_state.audio_player_task())
-            print("Play4")
             await ctx.send("Restarted player.", ephemeral=True)
 
         async with ctx.typing():
             try:
-                print("Play5")
                 source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
-                print("Play6")
 
             except YTDLError as e:
                 await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
             else:
-                print("Play7")
                 song = Song(source)
-                print("Play8")
 
                 await ctx.voice_state.songs.put(song)
-                print("Play9")
                 await ctx.send('Enqueued {}'.format(str(source)))
-                print("Play10")
 
     @_join.before_invoke
     @_play.before_invoke
