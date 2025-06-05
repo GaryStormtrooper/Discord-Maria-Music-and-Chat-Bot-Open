@@ -30,7 +30,7 @@ General commands:
 
     @commands.Cog.listener()
     async def on_ready(self):
-        await self.bot.change_presence(activity=discord.Game(f"Please be patient. I am still developing."))
+        await self.bot.change_presence(activity=discord.Game(f"What is up, gamers?"))
 
     @commands.command(name="help",description="Displays general commands", help="Displays all the available commands")
     async def help(self, ctx):
