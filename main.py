@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv(".env")
 TOKEN = environ["TOKEN"]
-logChannel : int = 1350540890027851806
+logChannel : int = <PUT_LOG_CHANNEL_ID_HERE>
 GUILD = environ["DISCORD_GUILD"]
 PREFIX = environ["PREFIX"]
 OWNER = environ["OWNER"]
