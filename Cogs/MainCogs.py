@@ -8,7 +8,7 @@ import asyncio
 
 load_dotenv(".env")
 TOKEN = environ["TOKEN"]
-logChannel : int = 1350540890027851806
+logChannel : int = <PUT_CHANNEL_LOG_ID_HERE>
 GUILD = environ["DISCORD_GUILD"]
 PREFIX = environ["PREFIX"]
 OWNER = environ["OWNER"]
@@ -29,14 +29,14 @@ class MainCog(commands.Cog):
     async def shutdown(self, ctx):
         """Shutdown the bot only if the OWNER issues the command"""
         if str(ctx.message.author.id) == OWNER:
-            print('Shutting down.  Goodbye, Gary.')
-            await ctx.send('Shutting down.  Goodbye, Gary.')
+            print('Shutting down.  Goodbye.')
+            await ctx.send('Shutting down.  Goodbye.')
             await ctx.bot.close()
             exit(0)
         else:
             print('Someone is trying to shut me down.  How rude.')
             async with ctx.typing():
-                await ctx.send('Only Gary can tell me to do that.')
+                await ctx.send('Only the owner can tell me to do that.')
                 await ctx.send('If there is a problem with my A.I. then please do tell him.')
                 await ctx.send(f'If not, then nice try, {ctx.message.author}.')
 
